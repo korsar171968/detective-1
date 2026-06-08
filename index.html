@@ -1,0 +1,836 @@
+<!-- БЛОК 1: ДЕТЕКТИВНОЕ АГЕНТСТВО (ВХОД) -->
+<section id="detective-entry" style="position: relative; width: 100%; min-height: 100vh; background: #121212; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Special Elite', serif; overflow: hidden; border-bottom: 5px solid #3d3d3d; user-select: none;">
+    
+    <!-- ТЕКСТ-АТМОСФЕРА -->
+    <div style="position: relative; z-index: 10; text-align: center; max-width: 700px; margin-bottom: 50px; padding: 20px;">
+        <h1 style="font-size: 50px; color: #f1c40f; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 25px; font-family: serif;">Последний свидетель</h1>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 5px; border: 1px solid #444; line-height: 1.8; text-align: left; box-shadow: 20px 20px 0 rgba(0,0,0,0.5);">
+            <p style="font-size: 18px; color: #bbb;">Город засыпает под шум дождя, но только не вы. В вашем кармане — записка с адресом, а в голове — миллион вопросов. За этой дверью начинается ваше самое запутанное расследование.</p>
+            <p style="font-size: 16px; color: #f1c40f; margin-top: 20px; font-weight: bold;">[!] НАЙДИТЕ КЛЮЧ: Посмотрите под ковриком или в почтовом ящике, чтобы открыть дверь в кабинет.</p>
+        </div>
+    </div>
+
+    <!-- КОРИДОР И ДВЕРЬ -->
+    <div style="position: relative; width: 300px; height: 400px; background: #2c1e14; border: 10px solid #1a1a1a; border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <!-- ЗАМОЧНАЯ СКВАЖИНА -->
+        <div id="keyhole" style="width: 20px; height: 35px; background: #000; border-radius: 10px 10px 5px 5px; position: relative; margin-top: 50px; border: 2px solid #f1c40f;"></div>
+        
+        <!-- КОВРИК -->
+        <div id="door-mat" onclick="findKey()" style="position: absolute; bottom: -20px; width: 200px; height: 50px; background: #5d4037; border-radius: 5px; cursor: pointer; text-align: center; line-height: 50px; font-size: 12px; color: #333; transition: 0.3s;">WELCOME</div>
+
+        <!-- КЛЮЧ (СКРЫТ) -->
+        <div id="hidden-key" onclick="takeKey()" style="display: none; position: absolute; bottom: 40px; font-size: 40px; cursor: pointer; filter: drop-shadow(0 0 10px #f1c40f);">🔑</div>
+    </div>
+
+    <div id="entry-status" style="margin-top: 30px; font-size: 18px; color: #27ae60; opacity: 0; transition: 1s;">ДВЕРЬ ОТКРЫТА. ВХОДИТЕ...</div>
+
+</section>
+
+<style>
+    @import url('https://googleapis.com');
+</style>
+
+<script>
+let keyFound = false;
+
+function findKey() {
+    const mat = document.getElementById('door-mat');
+    const key = document.getElementById('hidden-key');
+    mat.style.transform = "translateY(15px) rotateX(45deg)";
+    key.style.display = "block";
+}
+
+function takeKey() {
+    const key = document.getElementById('hidden-key');
+    const keyhole = document.getElementById('keyhole');
+    const status = document.getElementById('entry-status');
+    
+    // Анимация полета ключа в скважину
+    key.style.transition = "1s";
+    key.style.bottom = "165px";
+    key.style.fontSize = "20px";
+    
+    setTimeout(() => {
+        key.style.opacity = "0";
+        keyhole.style.background = "#27ae60";
+        keyhole.style.boxShadow = "0 0 15px #27ae60";
+        status.style.opacity = "1";
+    }, 1000);
+}
+</script>
+
+
+<!-- БЛОК 2: РАБОЧИЙ СТОЛ (ОБНОВЛЕННЫЙ) -->
+<section id="detective-desk-v2" style="position: relative; width: 100%; min-height: 100vh; background: #0a0a0a; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 5px solid #1a1a1a; overflow: hidden; user-select: none;">
+    
+    <!-- ТЕКСТОВЫЙ БЛОК -->
+    <div style="position: relative; z-index: 10; text-align: center; max-width: 850px; margin-bottom: 40px;">
+        <h2 style="color: #f1c40f; font-size: 36px; text-transform: uppercase; letter-spacing: 5px;">Агентство «Тайный Свидетель»</h2>
+        <div style="background: rgba(255, 255, 255, 0.03); padding: 30px; border-radius: 5px; border-top: 3px solid #f1c40f; line-height: 1.8; text-align: left; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <p style="font-size: 17px; color: #bbb;">Каждый предмет на этом столе — немой свидетель преступления. Вчерашняя газета скрывает следы борьбы, а в чашке с кофе плавает разгадка, которую я ищу уже неделю. Правда всегда на поверхности, нужно только уметь смотреть сквозь беспорядок.</p>
+            <p style="font-size: 15px; color: #f1c40f; margin-top: 15px; font-weight: bold;">[!] ОБЫСК: Кликните по предметам на столе, чтобы разбросать их и найти скрытую фотографию подозреваемого.</p>
+        </div>
+    </div>
+
+    <!-- ПОВЕРХНОСТЬ СТОЛА -->
+    <div id="desk-canvas" style="position: relative; z-index: 10; width: 100%; max-width: 700px; height: 450px; background: #2c1e14; border: 12px solid #1a1a1a; box-shadow: inset 0 0 80px #000; overflow: hidden; cursor: crosshair;">
+        
+        <!-- СКРЫТАЯ УЛИКА (ФОТО) -->
+        <div id="clue-photo" onclick="zoomClue()" style="position: absolute; top: 160px; left: 250px; width: 130px; height: 160px; background: #e5e5e5; border: 4px solid #fff; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); transform: rotate(5deg); cursor: pointer; transition: 0.5s; z-index: 5; display: flex; flex-direction: column; padding: 10px; box-sizing: border-box;">
+            <div style="width: 100%; height: 70%; background: #333; overflow: hidden; position: relative;">
+                <!-- Рисуем силуэт линиями вместо эмодзи -->
+                <div style="position: absolute; bottom: -10px; left: 10%; width: 80%; height: 80%; background: #111; border-radius: 50% 50% 0 0;"></div>
+                <div style="position: absolute; top: 15%; left: 30%; width: 40%; height: 45%; background: #111; border-radius: 50%;"></div>
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 3px);"></div>
+            </div>
+            <div style="margin-top: 10px; font-size: 10px; color: #000; font-family: sans-serif; font-weight: bold; border-top: 1px dashed #999; padding-top: 5px;">
+                ДЕЛO №092<br>ПОДОЗРЕВАЕМЫЙ "X"
+            </div>
+            <div style="position: absolute; top: 10px; right: 10px; font-size: 8px; color: #c0392b; border: 1px solid #c0392b; padding: 2px; transform: rotate(15deg);">TOP SECRET</div>
+        </div>
+
+        <!-- МУСОР НА СТОЛЕ -->
+        <div class="trash" onclick="scatter(this)" style="position: absolute; top: 140px; left: 230px; font-size: 100px; z-index: 10; cursor: pointer; transition: 0.5s;">📰</div>
+        <div class="trash" onclick="scatter(this)" style="position: absolute; top: 130px; left: 280px; font-size: 70px; z-index: 11; cursor: pointer; transition: 0.5s;">☕</div>
+        <div class="trash" onclick="scatter(this)" style="position: absolute; top: 100px; left: 200px; font-size: 60px; z-index: 12; cursor: pointer; transition: 0.2s; transform: rotate(-20deg);">📎</div>
+        <div class="trash" onclick="scatter(this)" style="position: absolute; top: 180px; left: 300px; font-size: 60px; z-index: 13; cursor: pointer; transition: 0.4s;">📂</div>
+
+    </div>
+
+    <!-- ПОЯСНЕНИЕ -->
+    <div id="clue-desc" style="margin-top: 30px; max-width: 600px; text-align: center; color: #f1c40f; opacity: 0; transition: 1s;">
+        <h4 style="margin-bottom: 10px;">ВЫ НАШЛИ ФРАГМЕНТ ЛИЧНОГО ДЕЛА</h4>
+        <p style="font-size: 14px; color: #ccc;">Силуэт кажется знакомым... Этот человек определенно был здесь. Теперь нужно найти досье №092 в архиве, чтобы узнать его имя.</p>
+    </div>
+
+</section>
+
+<script>
+function scatter(el) {
+    // Случайно разбрасываем вещи в стороны
+    const randomX = (Math.random() - 0.5) * 600;
+    const randomY = (Math.random() - 0.5) * 400;
+    const randomRot = (Math.random() - 0.5) * 180;
+    
+    el.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRot}deg)`;
+    el.style.opacity = "0.5";
+    el.style.pointerEvents = "none";
+}
+
+function zoomClue() {
+    const photo = document.getElementById('clue-photo');
+    const desc = document.getElementById('clue-desc');
+    
+    photo.style.transform = "translateY(-50px) scale(1.8) rotate(0deg)";
+    photo.style.zIndex = "100";
+    photo.style.borderColor = "#f1c40f";
+    desc.style.opacity = "1";
+}
+</script>
+
+
+<!-- БЛОК 3: ДОСКА ПОДОЗРЕВАЕМЫХ -->
+<section id="suspects-board" style="position: relative; width: 100%; min-height: 110vh; background: #121212; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 8px solid #2c1e14; overflow: hidden; user-select: none;">
+    
+    <!-- ТЕКСТ-РАЗМЫШЛЕНИЕ СВЕРХУ -->
+    <div style="text-align: center; max-width: 800px; margin-bottom: 50px; z-index: 10;">
+        <h2 style="color: #f1c40f; font-size: 38px; text-transform: uppercase; letter-spacing: 5px;">Следствие ведет... ТЫ</h2>
+        <div style="background: rgba(255, 255, 255, 0.03); padding: 30px; border-radius: 10px; border: 1px dashed #444; line-height: 1.8; text-align: left; margin-top: 20px;">
+            <p style="font-size: 18px; color: #eee; font-style: italic;">
+                "Так, давай посмотрим правде в глаза. У нас есть три кандидата на роль главного злодея. Кто-то из них вчера ошивался у причала. Мне нужно внимательно изучить их досье и понять, кто врет, а кто — просто жертва обстоятельств. Ну-ка, глянем на них поближе..."
+            </p>
+        </div>
+    </div>
+
+    <!-- ДОСКА С ФОТО И НИТЯМИ -->
+    <div id="cork-board" style="position: relative; z-index: 10; width: 100%; max-width: 900px; height: 500px; background: #3d2b1f; border: 15px solid #222; box-shadow: inset 0 0 50px #000, 20px 20px 0 rgba(0,0,0,0.5); display: flex; justify-content: space-around; align-items: center; padding: 20px;">
+        
+        <!-- КРАСНЫЕ НИТИ (Стилизованные линии) -->
+        <svg style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+            <line x1="20%" y1="30%" x2="50%" y2="50%" stroke="#c0392b" stroke-width="2" opacity="0.6" />
+            <line x1="80%" y1="30%" x2="50%" y2="50%" stroke="#c0392b" stroke-width="2" opacity="0.6" />
+        </svg>
+
+        <!-- ПОДОЗРЕВАЕМЫЙ 1 -->
+        <div class="suspect" onclick="investigate('Мэр Уолтер', 'Этот тип явно что-то недоговаривает. Говорит, что был на приеме, но почему тогда на его ботинках речной песок? Слишком гладко стелет...')" style="z-index: 10; cursor: pointer; text-align: center; transition: 0.3s;">
+            <div style="width: 150px; height: 180px; background: #ccc; border: 8px solid #fff; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); transform: rotate(-5deg); position: relative; overflow: hidden;">
+                <div style="font-size: 100px; filter: grayscale(1);">👨‍💼</div>
+            </div>
+            <p style="background: #fff; color: #000; padding: 5px; margin-top: 10px; font-weight: bold; font-size: 12px; transform: rotate(-5deg);">МЭР УОЛТЕР</p>
+        </div>
+
+        <!-- ПОДОЗРЕВАЕМЫЙ 2 -->
+        <div class="suspect" onclick="investigate('Певица Лаура', 'Она утверждает, что потеряла голос от страха. Но я видел, как она уверенно уходила из клуба через черный ход. Хм, красавица с секретом или опасный игрок?')" style="z-index: 10; cursor: pointer; text-align: center; transition: 0.3s;">
+            <div style="width: 150px; height: 180px; background: #ccc; border: 8px solid #fff; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); transform: rotate(3deg); position: relative; overflow: hidden;">
+                <div style="font-size: 100px; filter: grayscale(1);">👩‍🎤</div>
+            </div>
+            <p style="background: #fff; color: #000; padding: 5px; margin-top: 10px; font-weight: bold; font-size: 12px; transform: rotate(3deg);">ЛАУРА ВЕЙН</p>
+        </div>
+
+        <!-- ПОДОЗРЕВАЕМЫЙ 3 -->
+        <div class="suspect" onclick="investigate('Дворецкий Боб', 'Тихий, скромный... идеальный убийца? Он знает все входы и выходы в особняке. Говорит, чистил серебро, но его руки дрожат, когда я задаю вопросы.')" style="z-index: 10; cursor: pointer; text-align: center; transition: 0.3s;">
+            <div style="width: 150px; height: 180px; background: #ccc; border: 8px solid #fff; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); transform: rotate(-2deg); position: relative; overflow: hidden;">
+                <div style="font-size: 100px; filter: grayscale(1);">🤵</div>
+            </div>
+            <p style="background: #fff; color: #000; padding: 5px; margin-top: 10px; font-weight: bold; font-size: 12px; transform: rotate(-2deg);">ДВОРЕЦКИЙ БОБ</p>
+        </div>
+    </div>
+
+    <!-- МЫСЛИ ДЕТЕКТИВА (ОБЛАКО) -->
+    <div id="thought-cloud" style="margin-top: 40px; max-width: 700px; background: #f1c40f; color: #000; padding: 25px; border-radius: 50px 50px 50px 0; border: 3px solid #000; opacity: 0; transform: translateY(20px); transition: 0.5s; font-style: italic; font-weight: bold;">
+        <span id="thought-text">Кликни на фото, чтобы прочитать мои мысли...</span>
+    </div>
+
+</section>
+
+<script>
+function investigate(name, thought) {
+    const cloud = document.getElementById('thought-cloud');
+    const text = document.getElementById('thought-text');
+    
+    // Эффект появления мыслей
+    cloud.style.opacity = "1";
+    cloud.style.transform = "translateY(0)";
+    text.innerText = `"${thought}"`;
+    
+    // Подсветка активного фото
+    const suspects = document.querySelectorAll('.suspect');
+    suspects.forEach(s => s.style.filter = "brightness(0.5) grayscale(1)");
+    event.currentTarget.style.filter = "brightness(1.2) grayscale(0)";
+    event.currentTarget.style.transform = "scale(1.1) rotate(0deg)";
+}
+</script>
+
+<style>
+    .suspect:hover { transform: scale(1.05) rotate(0deg) !important; filter: brightness(1.1) !important; }
+</style>
+
+
+<!-- БЛОК 4: УЛИКА ПОД ЛУПОЙ -->
+<section id="detective-magnifier" style="position: relative; width: 100%; min-height: 100vh; background: #0f0f0f; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 5px solid #1a1a1a; overflow: hidden; cursor: none;">
+    
+    <!-- ТЕКСТ-МЫСЛИ (ГОВОРИМ САМИ С СОБОЙ) -->
+    <div style="text-align: center; max-width: 800px; margin-bottom: 40px; z-index: 10;">
+        <div style="background: #f1c40f; color: #000; padding: 20px; border-radius: 15px; box-shadow: 10px 10px 0 #000; display: inline-block; transform: rotate(-1deg);">
+            <p style="font-size: 19px; font-weight: bold; margin: 0;">
+                "Ага! Вот оно, то самое письмо, которое уронил подозреваемый. <br> На первый взгляд — просто мусор. Но моя верная лупа никогда не врет... <br> Чьи это пальчики оставили здесь след?"
+            </p>
+        </div>
+    </div>
+
+    <!-- ЗОНА ИССЛЕДОВАНИЯ -->
+    <div id="clue-zone" style="position: relative; width: 100%; max-width: 700px; height: 450px; background: #2c1e14; border: 10px solid #1a1a1a; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        
+        <!-- ПИСЬМО (ГРЯЗНОЕ) -->
+        <div style="width: 400px; height: 300px; background: #e5e5e5; border: 1px solid #999; box-shadow: 5px 5px 20px rgba(0,0,0,0.5); padding: 30px; color: #888; position: relative;">
+            <p style="filter: blur(2px); opacity: 0.5;">Уважаемый господин... Мы договорились о... <br><br> (Текст залит чернилами)</p>
+            <div style="position: absolute; top: 50px; left: 50px; width: 100px; height: 80px; background: #000; filter: blur(5px); opacity: 0.8; border-radius: 50%;"></div>
+            
+            <!-- СКРЫТЫЕ СЛОИ (ВИДНЫ ТОЛЬКО ПОД ЛУПОЙ) -->
+            <div id="hidden-clue" style="position: absolute; inset: 0; padding: 30px; color: #c0392b; font-weight: bold; font-size: 20px; opacity: 0; z-index: 5;">
+                <div style="position: absolute; top: 120px; left: 200px; font-size: 60px; opacity: 0.8;">👣</div>
+                <div style="position: absolute; top: 40px; right: 40px; border: 2px solid #c0392b; padding: 5px; transform: rotate(15deg);">УЛИКА №4</div>
+                <p style="margin-top: 150px;">...ДЕНЬГИ БУДУТ У МЭРА.</p>
+            </div>
+        </div>
+
+        <!-- ЛУПА (ЭТО НАШ КУРСОР) -->
+        <div id="magnifier" style="position: absolute; width: 180px; height: 180px; border: 8px solid #555; border-radius: 50%; box-shadow: 0 0 0 1000px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); backdrop-filter: brightness(1.5) contrast(1.2);">
+            <div style="width: 2px; height: 100%; background: rgba(255,255,255,0.2); position: absolute;"></div>
+            <div style="width: 100%; height: 2px; background: rgba(255,255,255,0.2); position: absolute;"></div>
+        </div>
+    </div>
+
+    <!-- РЕАКЦИЯ ДЕТЕКТИВА -->
+    <div id="lab-comment" style="margin-top: 30px; color: #f1c40f; font-size: 18px; font-style: italic; opacity: 0; transition: 0.5s;">
+        "Ого! Упоминание Мэра? И этот след... кажется, наш 'герой' носит туфли ручной работы."
+    </div>
+
+</section>
+
+<script>
+    const zone = document.getElementById('clue-zone');
+    const magnifier = document.getElementById('magnifier');
+    const hidden = document.getElementById('hidden-clue');
+    const comment = document.getElementById('lab-comment');
+
+    zone.addEventListener('mousemove', (e) => {
+        const rect = zone.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Двигаем лупу
+        magnifier.style.left = (x - 90) + 'px';
+        magnifier.style.top = (y - 90) + 'px';
+
+        // Проявляем улику, если лупа над письмом
+        if (x > 150 && x < 550 && y > 75 && y < 375) {
+            hidden.style.opacity = "1";
+            comment.style.opacity = "1";
+        } else {
+            hidden.style.opacity = "0";
+        }
+    });
+
+    zone.addEventListener('mouseleave', () => {
+        magnifier.style.display = "none";
+    });
+    zone.addEventListener('mouseenter', () => {
+        magnifier.style.display = "flex";
+    });
+</script>
+
+<!-- БЛОК 5: ИНТЕРАКТИВНЫЙ ДОПРОС -->
+<section id="interrogation-v3" style="position: relative; width: 100%; min-height: 110vh; background: #050505; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 5px solid #c0392b; overflow: hidden; user-select: none;">
+    
+    <!-- ТВОИ МЫСЛИ (ВЕРХ) -->
+    <div style="text-align: center; max-width: 850px; margin-bottom: 40px; z-index: 10;">
+        <div id="det-thought" style="background: rgba(192, 57, 43, 0.1); border: 2px solid #c0392b; padding: 25px; border-radius: 5px; box-shadow: 0 10px 40px #000;">
+            <p style="font-size: 18px; color: #fff; font-style: italic; margin: 0;">
+                "Так, комната допроса готова. Кто первый пойдет на раскол? Мэр выглядит напуганным, Лаура слишком спокойна, а Дворецкий... он вообще человек? Нужно выбрать одного и вытрясти из него правду."
+            </p>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center; flex-wrap: wrap; z-index: 10; width: 100%; max-width: 1100px;">
+        
+        <!-- КНОПКИ ВЫБОРА ГЕРОЯ -->
+        <div style="display: flex; flex-direction: column; gap: 15px; flex: 0.5;">
+            <h4 style="color: #c0392b; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px;">Вызвать на допрос:</h4>
+            <button class="hero-btn" onclick="selectSuspect('mayer')">🤵 МЭР УОЛТЕР</button>
+            <button class="hero-btn" onclick="selectSuspect('singer')">💃 ЛАУРА ВЕЙН</button>
+            <button class="hero-btn" onclick="selectSuspect('butler')">👤 ДВОРЕЦКИЙ БОБ</button>
+        </div>
+
+        <!-- КРЕСЛО ДОПРОСА -->
+        <div style="flex: 1; position: relative; background: #111; height: 450px; border: 4px solid #222; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 100px #000;">
+            <div style="position: absolute; top: 0; width: 100%; height: 100px; background: radial-gradient(circle at top, rgba(255,255,255,0.1), transparent);"></div>
+            
+            <div id="suspect-avatar" style="font-size: 180px; filter: brightness(0.1) blur(1px); transition: 0.5s; opacity: 0.3;">👤</div>
+            
+            <div id="suspect-answer" style="width: 80%; background: #fff; color: #000; padding: 15px; font-weight: bold; font-size: 14px; text-align: center; border-radius: 3px; position: absolute; bottom: 20px; display: none;">...</div>
+        </div>
+
+        <!-- СПИСОК ВОПРОСОВ -->
+        <div style="flex: 1;">
+            <h4 style="color: #f1c40f; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px;">Твои вопросы:</h4>
+            <div id="question-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <p style="color: #555; font-style: italic;">Сначала выбери того, кого хочешь спросить...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-btn { background: #1a1a1a; border: 1px solid #c0392b; color: #fff; padding: 12px; cursor: pointer; font-family: 'Special Elite'; transition: 0.3s; }
+    .hero-btn:hover { background: #c0392b; box-shadow: 0 0 15px #c0392b; }
+    .q-btn { background: transparent; border: 1px solid #444; color: #888; padding: 10px; cursor: pointer; text-align: left; font-family: 'Special Elite'; font-size: 13px; }
+    .q-btn:hover { border-color: #f1c40f; color: #fff; }
+</style>
+
+<script>
+    const database = {
+        mayer: {
+            icon: "🤵",
+            intro: "Мэр нервно поправляет галстук. Он выглядит так, будто не спал неделю. 'Детектив, я уважаемый человек! Зачем мне всё это?'",
+            qs: [
+                {t: "Про письмо с вашим именем...", r: "Это подделка! Кто-то хочет меня подставить и занять мое кресло!"},
+                {t: "Где вы были в полночь?", r: "Я... я был дома. Моя жена подтвердит. Наверное... она спала."},
+                {t: "Вы знали жертву лично?", r: "Мы встречались на благотворительных вечерах. Не более того!"}
+            ]
+        },
+        singer: {
+            icon: "💃",
+            intro: "Лаура загадочно улыбается. От неё пахнет дорогими духами и тайной. 'Спрашивайте, детектив. Мне нечего скрывать.'",
+            qs: [
+                {t: "Вы видели фото со шрамом?", r: "Шрам? У многих мужчин есть шрамы. Но этот... он кажется мне знакомым."},
+                {t: "Почему вы ушли через черный ход?", r: "Толпы фанатов, детектив. Я просто хотела тишины. Разве это преступление?"},
+                {t: "Кто оплатил ваш последний тур?", r: "Анонимный поклонник. В моем мире это обычное дело."}
+            ]
+        },
+        butler: {
+            icon: "👤",
+            intro: "Боб стоит неподвижно. Его лицо — маска. 'Я к вашим услугам, сэр. Но боюсь, я мало чем могу помочь.'",
+            qs: [
+                {t: "Вы чистили серебро в полночь?", r: "Именно так. Работа дворецкого никогда не заканчивается."},
+                {t: "Вы видели Мэра той ночью?", r: "Я видел только тени, сэр. Тени в нашем доме умеют ходить беззвучно."},
+                {t: "Что в том закрытом сейфе?", r: "Ключ только у хозяина. Я лишь слежу за порядком в комнатах."}
+            ]
+        }
+    };
+
+    function selectSuspect(key) {
+        const data = database[key];
+        const avatar = document.getElementById('suspect-avatar');
+        const thought = document.getElementById('det-thought').querySelector('p');
+        const qBox = document.getElementById('question-list');
+        const ans = document.getElementById('suspect-answer');
+
+        ans.style.display = "none";
+        avatar.innerText = data.icon;
+        avatar.style.opacity = "0.6";
+        avatar.style.filter = "brightness(0.3) blur(1px)";
+        
+        thought.innerText = `"${data.intro}"`;
+        
+        qBox.innerHTML = "";
+        data.qs.forEach(q => {
+            const b = document.createElement('button');
+            b.className = "q-btn";
+            b.innerText = q.t;
+            b.onclick = () => {
+                ans.innerText = q.r;
+                ans.style.display = "block";
+                avatar.style.filter = "brightness(0.5) blur(0px)";
+                avatar.style.transform = "scale(1.1)";
+            };
+            qBox.appendChild(b);
+        });
+    }
+</script>
+
+
+<!-- БЛОК 6: ВЗЛОМ СЕЙФА -->
+<section id="detective-safe" style="position: relative; width: 100%; min-height: 110vh; background: #0a0a0a; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 5px solid #f1c40f; overflow: hidden; user-select: none;">
+    
+    <!-- ТВОИ МЫСЛИ -->
+    <div style="text-align: center; max-width: 800px; margin-bottom: 50px; z-index: 10;">
+        <div style="background: rgba(241, 196, 15, 0.05); border: 1px solid #f1c40f; padding: 25px; border-radius: 5px;">
+            <p id="safe-thoughts" style="font-size: 18px; color: #eee; font-style: italic; margin: 0;">
+                "Так, Дворецкий не соврал — сейф существует. Мэр чуть в обморок не упал, когда я просто на него посмотрела. Код должен быть где-то рядом... может, это дата? Или просто случайные цифры? Попробую подобрать на слух."
+            </p>
+        </div>
+    </div>
+
+    <!-- СЕЙФ -->
+    <div id="safe-body" style="position: relative; width: 400px; height: 400px; background: #2c3e50; border: 15px solid #1a1a1a; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 50px #000, 0 20px 40px rgba(0,0,0,0.5);">
+        
+        <!-- ЦИФЕРБЛАТ -->
+        <div id="safe-dial" style="width: 200px; height: 200px; background: radial-gradient(circle, #34495e, #1a1a1a); border: 8px solid #f1c40f; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.2s;">
+            <div id="dial-number" style="font-size: 50px; color: #f1c40f; text-shadow: 0 0 10px #f1c40f;">0</div>
+            <!-- Стрелка -->
+            <div style="position: absolute; top: -10px; width: 4px; height: 20px; background: #f1c40f;"></div>
+        </div>
+
+        <div style="display: flex; gap: 40px; margin-top: 30px;">
+            <button class="safe-btn" onclick="rotateDial(-1)">◀ LEFT</button>
+            <button class="safe-btn" onclick="rotateDial(1)">RIGHT ▶</button>
+        </div>
+
+        <!-- СОДЕРЖИМОЕ (СКРЫТО) -->
+        <div id="safe-treasure" style="display: none; position: absolute; inset: 20px; background: #111; border-radius: 10px; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; animation: openSafe 1s forwards;">
+            <div style="font-size: 80px;">💍</div>
+            <p style="color: #f1c40f; font-weight: bold; margin-top: 10px;">ЗОЛОТАЯ ЗАПОНКА</p>
+            <p style="font-size: 14px; text-align: center; color: #ccc; font-style: italic;">"На обратной стороне гравировка... буква 'W'. Неужели это действительно Уолтер? Или кто-то хочет, чтобы я так думала?"</p>
+        </div>
+    </div>
+
+    <style>
+        .safe-btn { background: #1a1a1a; border: 2px solid #f1c40f; color: #f1c40f; padding: 10px 20px; cursor: pointer; font-family: 'Special Elite'; font-size: 18px; }
+        .safe-btn:hover { background: #f1c40f; color: #000; }
+        @keyframes openSafe { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .click-fx { animation: shakeSafe 0.1s; }
+        @keyframes shakeSafe { 0% { transform: translateX(0); } 50% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+    </style>
+
+    <script>
+    let currentNum = 0;
+    const targetNum = 7; // КОД СЕЙФА
+    let unlocked = false;
+
+    function rotateDial(dir) {
+        if(unlocked) return;
+        currentNum += dir;
+        if(currentNum > 10) currentNum = 0;
+        if(currentNum < 0) currentNum = 10;
+
+        document.getElementById('dial-number').innerText = currentNum;
+        const dial = document.getElementById('safe-dial');
+        dial.style.transform = `rotate(${currentNum * 36}deg)`;
+
+        // Эффект "щелчка"
+        if(currentNum === targetNum) {
+            document.body.style.background = "#222";
+            setTimeout(() => document.body.style.background = "#0a0a0a", 100);
+            dial.style.borderColor = "#27ae60";
+            
+            // Если замер на правильной цифре - открываем через секунду
+            setTimeout(() => {
+                unlocked = true;
+                document.getElementById('safe-treasure').style.display = 'flex';
+                document.getElementById('safe-thoughts').innerText = "\"Есть! Сейф открылся. Так-так, что тут у нас... Золотая запонка? Инициал 'W'. У Мэра как раз не хватало одной на допросе! Но постойте...\"";
+            }, 800);
+        } else {
+            dial.style.borderColor = "#f1c40f";
+        }
+    }
+    </script>
+</section>
+
+
+<!-- БЛОК 7: ИНТЕРАКТИВНЫЙ ТЕЛЕФОН -->
+<section id="det-phone-final" style="position: relative; width: 100%; min-height: 120vh; background: #0a0a0a; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 5px solid #444; overflow: hidden; user-select: none;">
+    
+    <!-- ТВОИ МЫСЛИ (ВСЕГДА ВИДНЫ СВЕРХУ) -->
+    <div style="text-align: center; max-width: 800px; margin-bottom: 40px; z-index: 10;">
+        <div id="p-thoughts" style="background: rgba(255, 255, 255, 0.05); border: 2px solid #555; padding: 25px; border-radius: 5px; box-shadow: 0 10px 30px #000;">
+            <p style="font-size: 18px; color: #eee; font-style: italic; margin: 0;">
+                "Так, на том клочке бумаги из сейфа были цифры: 4... 2... 0... Нужно набрать их именно в этом порядке. Кто бы ни был на том конце, он явно не ждет моего звонка. Главное — не выдать себя раньше времени."
+            </p>
+        </div>
+    </div>
+
+    <!-- ТЕЛЕФОН С ЦИФРАМИ -->
+    <div style="position: relative; z-index: 10; width: 320px; height: 320px; background: #1a1a1a; border-radius: 50%; border: 12px solid #222; box-shadow: 0 0 50px #000, inset 0 0 30px #000; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; padding: 20px;">
+        
+        <!-- КНОПКИ НОМЕРА -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <button class="num-btn" onclick="pressNum(1)">1</button>
+            <button class="num-btn" onclick="pressNum(2)">2</button>
+            <button class="num-btn" onclick="pressNum(3)">3</button>
+            <button class="num-btn" onclick="pressNum(4)">4</button>
+            <button class="num-btn" onclick="pressNum(5)">5</button>
+            <button class="num-btn" onclick="pressNum(6)">6</button>
+            <button class="num-btn" onclick="pressNum(7)">7</button>
+            <button class="num-btn" onclick="pressNum(8)">8</button>
+            <button class="num-btn" onclick="pressNum(9)">9</button>
+            <button class="num-btn" style="grid-column: span 3;" onclick="pressNum(0)">0</button>
+        </div>
+
+        <div id="number-display" style="position: absolute; top: -60px; font-size: 24px; color: #f1c40f; letter-spacing: 5px;">_ _ _</div>
+    </div>
+
+    <!-- ТЕКСТ ЗВОНКА (ВНИЗУ) -->
+    <div id="call-result" style="margin-top: 50px; max-width: 600px; background: rgba(0,0,0,0.8); border: 1px dashed #f1c40f; padding: 30px; opacity: 0; transition: 1s; text-align: center;">
+        <p style="color: #f1c40f; font-weight: bold; margin-bottom: 10px;">[ СОЕДИНЕНИЕ УСТАНОВЛЕНО ]</p>
+        <p id="voice-msg" style="font-size: 16px; color: #fff; line-height: 1.8; font-style: italic;">
+            "...Время почти на исходе. Пакет должен быть доставлен до полуночи. Неважно, кто встанет на пути — Мэр, девчонка из клуба или прислуга. Убери любого, кто задает лишние вопросы. Мы не можем проиграть теперь..."
+        </p>
+    </div>
+
+</section>
+
+<style>
+    .num-btn {
+        width: 60px; height: 60px; background: #222; border: 2px solid #444; color: #888;
+        border-radius: 50%; font-family: 'Special Elite'; font-size: 20px; cursor: pointer; transition: 0.2s;
+    }
+    .num-btn:hover { border-color: #f1c40f; color: #f1c40f; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
+    .num-btn:active { background: #f1c40f; color: #000; transform: scale(0.9); }
+</style>
+
+<script>
+    let dialed = "";
+    const target = "420";
+
+    function pressNum(n) {
+        if (dialed.length < 3) {
+            dialed += n;
+            const display = document.getElementById('number-display');
+            display.innerText = dialed.split('').join(' ');
+            
+            // Звук клика (визуальный)
+            console.log("Бип: " + n);
+
+            if (dialed.length === 3) {
+                if (dialed === target) {
+                    startCall();
+                } else {
+                    setTimeout(resetDial, 500);
+                }
+            }
+        }
+    }
+
+    function resetDial() {
+        dialed = "";
+        document.getElementById('number-display').innerText = "_ _ _";
+        document.getElementById('p-thoughts').querySelector('p').innerText = "\"Черт, номер неверный. Короткие гудки... Нужно попробовать еще раз. Помню, там были цифры 4, 2 и 0.\"";
+    }
+
+    function startCall() {
+        const result = document.getElementById('call-result');
+        const thoughts = document.getElementById('p-thoughts').querySelector('p');
+        
+        result.style.opacity = "1";
+        thoughts.innerText = "\"Тише! Слышу дыхание в трубке... Кажется, это запись. 'Убери любого, кто задает вопросы'? Значит, под угрозой все — и Мэр, и Лаура, и Боб. Но кто же тогда отдает приказы?\"";
+    }
+</script>
+
+
+<!-- БЛОК 8: КАРТА ГОРОДА (ПОИСК ЛОГОВА) -->
+<section id="detective-map" style="position: relative; width: 100%; min-height: 110vh; background: #1a1a1a; color: #dcdcdc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-bottom: 5px solid #2c3e50; overflow: hidden; user-select: none;">
+    
+    <!-- ТВОИ МЫСЛИ -->
+    <div style="text-align: center; max-width: 850px; margin-bottom: 40px; z-index: 10;">
+        <div id="map-thoughts" style="background: rgba(44, 62, 80, 0.2); border: 2px solid #3498db; padding: 25px; border-radius: 5px; box-shadow: 0 10px 40px #000;">
+            <p style="font-size: 18px; color: #fff; font-style: italic; margin: 0;">
+                "Звонок шел через старую подстанцию. Если соединить места, где были Мэр, Лаура и Боб в ту ночь... Получается странный треугольник. Где-то в центре должно быть место их встречи. Или логово того, кто ими помыкает."
+            </p>
+        </div>
+    </div>
+
+    <!-- КАРТА С ПИНАМИ -->
+    <div id="map-container" style="position: relative; z-index: 10; width: 100%; max-width: 800px; height: 500px; background: url('https://transparenttextures.com'), #c2b280; border: 15px solid #2c1e14; box-shadow: 20px 20px 50px #000; overflow: hidden;">
+        
+        <!-- СЕТКА И КВАРТАЛЫ (Стилизованные линии) -->
+        <div style="position: absolute; inset: 0; opacity: 0.3; background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 50px 50px;"></div>
+
+        <!-- ТОЧКИ (ПИНЫ) -->
+        <div class="map-pin" onclick="dropPin(this, 'city-hall')" style="top: 100px; left: 150px;" data-x="165" data-y="115">🏛️ <small style="display:block; font-size:10px;">Мэрия</small></div>
+        <div class="map-pin" onclick="dropPin(this, 'club')" style="top: 350px; left: 550px;" data-x="565" data-y="365">💃 <small style="display:block; font-size:10px;">Клуб</small></div>
+        <div class="map-pin" onclick="dropPin(this, 'manor')" style="top: 50px; left: 600px;" data-x="615" data-y="65">🏰 <small style="display:block; font-size:10px;">Особняк</small></div>
+
+        <!-- КАНВАС ДЛЯ НИТЕЙ -->
+        <canvas id="thread-canvas" style="position: absolute; inset: 0; pointer-events: none; z-index: 5;"></canvas>
+
+        <!-- СКРЫТОЕ ЛОГОВО -->
+        <div id="secret-lair" style="display: none; position: absolute; top: 220px; left: 420px; z-index: 20; animation: pulseRed 1s infinite;">
+            <div style="font-size: 50px; cursor: pointer;" onclick="finalClue()">📍</div>
+            <div style="background: #c0392b; color: #fff; padding: 5px; font-size: 10px; font-weight: bold; border-radius: 3px;">СКЛАД №13</div>
+        </div>
+    </div>
+
+    <!-- ВЕРДИКТ -->
+    <div id="map-verdict" style="margin-top: 30px; color: #f1c40f; font-size: 20px; font-weight: bold; opacity: 0; transition: 1s; text-align: center;">
+        "БИНГО! Все нити ведут к старому Складу №13. Там нас ждет либо ответ, либо пуля. Едем."
+    </div>
+
+</section>
+
+<style>
+    .map-pin {
+        position: absolute; font-size: 30px; cursor: pointer; z-index: 10;
+        transition: 0.3s; filter: grayscale(1); opacity: 0.7;
+    }
+    .map-pin.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); }
+    @keyframes pulseRed { 0% { transform: scale(1); filter: drop-shadow(0 0 5px red); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 20px red); } 100% { transform: scale(1); filter: drop-shadow(0 0 5px red); } }
+</style>
+
+<script>
+    let pinsDropped = 0;
+    const pinCoords = [];
+
+    function dropPin(el, type) {
+        if(el.classList.contains('active')) return;
+        
+        el.classList.add('active');
+        pinsDropped++;
+        
+        pinCoords.push({ x: parseInt(el.dataset.x), y: parseInt(el.dataset.y) });
+
+        if(pinsDropped === 3) {
+            drawThreads();
+            setTimeout(() => {
+                document.getElementById('secret-lair').style.display = 'block';
+                document.getElementById('map-verdict').style.opacity = '1';
+                document.getElementById('map-thoughts').querySelector('p').innerText = "\"Ловушка захлопнулась. Координаты ведут в промзону. Этот Склад №13 — идеальное место, чтобы спрятать концы в воду.\"";
+            }, 1000);
+        }
+    }
+
+    function drawThreads() {
+        const canvas = document.getElementById('thread-canvas');
+        canvas.width = 800;
+        canvas.height = 500;
+        const ctx = canvas.getContext('2d');
+        
+        ctx.strokeStyle = "#c0392b";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([5, 5]);
+
+        ctx.beginPath();
+        ctx.moveTo(pinCoords[0].x, pinCoords[0].y);
+        ctx.lineTo(pinCoords[1].x, pinCoords[1].y);
+        ctx.lineTo(pinCoords[2].x, pinCoords[2].y);
+        ctx.lineTo(pinCoords[0].x, pinCoords[0].y);
+        ctx.stroke();
+    }
+</script>
+
+
+<!-- БЛОК 9: ФИНАЛЬНОЕ ОБВИНЕНИЕ -->
+<section id="detective-verdict" style="position: relative; width: 100%; min-height: 110vh; background: #050505; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-top: 5px solid #c0392b; overflow: hidden; user-select: none;">
+    
+    <!-- МЫСЛИ ДЕТЕКТИВА (ПОСЛЕДНИЕ СОМНЕНИЯ) -->
+    <div style="text-align: center; max-width: 850px; margin-bottom: 50px; z-index: 10;">
+        <div id="final-thoughts" style="background: rgba(192, 57, 43, 0.1); border: 2px solid #c0392b; padding: 30px; border-radius: 5px; box-shadow: 0 0 50px #000;">
+            <p style="font-size: 19px; color: #fff; font-style: italic; margin: 0;">
+                "Я стою в центре этого пустого склада. Все улики здесь. <br> 
+                Мэр — трус, но стал бы он так рисковать? <br>
+                Лаура — актриса, её слезы могут быть игрой. <br>
+                А Боб... он был слишком тихим. Слишком идеальным. <br>
+                <span style="color: #f1c40f;">ПОРА СДЕЛАТЬ ВЫБОР. КТО КУКЛОВОД?"</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- КАРТОЧКИ ОБВИНЕНИЯ -->
+    <div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; z-index: 10;">
+        
+        <!-- КАРТОЧКА 1 -->
+        <div class="verdict-card" onclick="accuse('mayer', 'МЭР УОЛТЕР', 'Вы обвинили Мэра. Он падает на колени: «Я только брал деньги! Я не убивал! Меня заставили!» Он — лишь соучастник. Настоящий преступник всё еще на свободе...')">
+            <div style="font-size: 80px;">🤵</div>
+            <h3>МЭР</h3>
+            <p>Улика: Запонка "W"</p>
+        </div>
+
+        <!-- КАРТОЧКА 2 -->
+        <div class="verdict-card" onclick="accuse('singer', 'ЛАУРА ВЕЙН', 'Лаура смеется вам в лицо: «Браво, детектив! Но у вас нет доказательств!» Она была мозгом операции. Это она подбросила запонку Мэру и написала письмо, чтобы запутать вас. ДЕЛО ЗАКРЫТО!')">
+            <div style="font-size: 80px;">💃</div>
+            <h3>ЛАУРА</h3>
+            <p>Улика: Знание о шраме</p>
+        </div>
+
+        <!-- КАРТОЧКА 3 -->
+        <div class="verdict-card" onclick="accuse('butler', 'ДВОРЕЦКИЙ БОБ', 'Боб поправляет перчатки: «Я ждал этого момента, детектив». Он — главный исполнитель. Он следил за каждым вашим шагом и убирал свидетелей. Но Лаура была его боссом... Вы поймали правую руку!')">
+            <div style="font-size: 80px;">👤</div>
+            <h3>БОБ</h3>
+            <p>Улика: Доступ к сейфу</p>
+        </div>
+    </div>
+
+    <!-- ОКНО ФИНАЛА (СКРЫТО) -->
+    <div id="verdict-result" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #fff; color: #000; padding: 50px; border: 10px double #000; max-width: 600px; text-align: center; transform: rotate(-1deg);">
+            <h1 id="result-name" style="color: #c0392b; font-size: 40px; margin-bottom: 20px;"></h1>
+            <p id="result-text" style="font-size: 20px; line-height: 1.8; margin-bottom: 30px;"></p>
+            <button onclick="goToFinalPage()" style="background: #000; color: #fff; padding: 15px 40px; border: none; cursor: pointer; font-family: 'Special Elite'; font-size: 18px;">ЗАКОНЧИТЬ ДЕЛО</button>
+        </div>
+    </div>
+
+</section>
+
+<style>
+    .verdict-card {
+        width: 220px; background: #1a1a1a; border: 2px solid #444; padding: 30px;
+        text-align: center; cursor: pointer; transition: 0.3s;
+    }
+    .verdict-card:hover { border-color: #f1c40f; transform: translateY(-10px); box-shadow: 0 10px 30px rgba(241, 196, 15, 0.2); }
+    .verdict-card h3 { color: #f1c40f; margin: 15px 0; }
+    .verdict-card p { font-size: 12px; color: #888; }
+</style>
+
+<script>
+    function accuse(id, name, text) {
+        const overlay = document.getElementById('verdict-result');
+        document.getElementById('result-name').innerText = name;
+        document.getElementById('result-text').innerText = text;
+        overlay.style.display = "flex";
+    }
+
+    function goToFinalPage() {
+        const final = document.getElementById('detective-final'); // Это ID нашего будущего 10 блока
+        if(final) {
+            final.scrollIntoView({ behavior: 'smooth' });
+        }
+        document.getElementById('verdict-result').style.display = 'none';
+    }
+</script>
+
+
+
+<!-- БЛОК 10: ФИНАЛ - ДЕЛО ЗАКРЫТО -->
+<section id="detective-final" style="position: relative; width: 100%; min-height: 100vh; background: #080808; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; box-sizing: border-box; font-family: 'Special Elite', serif; border-top: 10px solid #27ae60; overflow: hidden; user-select: none;">
+    
+    <!-- КАНВАС ДЛЯ РАЗЛЕТАЮЩИХСЯ УЛИК -->
+    <canvas id="clues-canvas" style="position: absolute; inset: 0; z-index: 50; pointer-events: none;"></canvas>
+
+    <!-- СЦЕНА В ДОПРОСНОЙ -->
+    <div id="final-scene" style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 800px;">
+        
+        <h2 style="font-size: 40px; color: #27ae60; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 30px;">Дело №092: ЗАКРЫТО</h2>
+
+        <div style="position: relative; width: 350px; height: 350px; background: #1a1a1a; border: 5px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 50px rgba(39, 174, 96, 0.2); margin-bottom: 40px;">
+            <!-- ЛАУРА В НАРУЧНИКАХ (ВИЗУАЛ) -->
+            <div style="font-size: 150px; filter: grayscale(1) brightness(0.7);">💃</div>
+            <div style="position: absolute; bottom: 80px; font-size: 60px; filter: drop-shadow(0 0 10px #fff);">⛓️</div>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 5px; border-left: 5px solid #27ae60; text-align: left; line-height: 1.8; margin-bottom: 40px;">
+            <p style="font-size: 18px; font-style: italic; color: #ccc; margin: 0;">
+                "Ну вот и всё, Лаура. Твоя игра окончена. Наручники тебе совсем не к лицу, но закон есть закон. <br> 
+                Город может спать спокойно, пока я на посту. Это было чертовски сложное дело, но справедливость всегда находит путь."
+            </p>
+        </div>
+
+        <!-- ПАПКА С ПЕЧАТЬЮ -->
+        <div id="final-folder" style="position: relative; width: 250px; height: 180px; background: #d2b48c; border: 2px solid #a0522d; box-shadow: 10px 10px 0 #000; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;" onclick="applyStamp()">
+            <b style="color: #5d4037; font-size: 20px;">CASE: 092</b>
+            <div id="red-stamp" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(3); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;">
+                <div style="border: 5px solid #c0392b; color: #c0392b; padding: 10px 20px; font-size: 30px; font-weight: 900; transform: rotate(-20deg); text-transform: uppercase;">РАСКРЫТО</div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #5d4037;">[ НАЖМИ, ЧТОБЫ ЗАКРЫТЬ ]</div>
+        </div>
+    </div>
+
+    <!-- ТИТРЫ -->
+    <div id="credits" style="display: none; position: relative; z-index: 100; margin-top: 50px; text-align: center; animation: fadeInCredits 2s;">
+        <h3 style="color: #f1c40f; letter-spacing: 10px; font-size: 24px;">ВЕЛИКИЙ ДЕТЕКТИВ — ЭТО ТЫ</h3>
+        <p style="color: #888; font-size: 14px; margin-top: 10px;">Конец расследования.</p>
+    </div>
+
+</section>
+
+<script>
+(function() {
+    const canvas = document.getElementById('clues-canvas');
+    const ctx = canvas.getContext('2d');
+    const stamp = document.getElementById('red-stamp');
+    const credits = document.getElementById('credits');
+    let clues = [];
+
+    // Предметы, которые полетят
+    const clueIcons = ['💍', '📰', '🔑', '📂', '🍷', '📝', '👣', '💰'];
+
+    window.applyStamp = function() {
+        stamp.style.opacity = "1";
+        stamp.style.transform = "scale(1) rotate(-15deg)";
+        credits.style.display = "block";
+        
+        // Генерируем улики
+        for(let i=0; i<40; i++) {
+            clues.push({
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2 + 100,
+                vx: (Math.random() - 0.5) * 25,
+                vy: (Math.random() - 1) * 25,
+                icon: clueIcons[Math.floor(Math.random() * clueIcons.length)],
+                size: Math.random() * 30 + 20,
+                rot: Math.random() * 360,
+                vRot: (Math.random() - 0.5) * 10
+            });
+        }
+    };
+
+    function animateClues() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        clues.forEach((p, i) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.5; // Гравитация
+            p.rot += p.vRot;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.font = p.size + "px Arial";
+            ctx.fillText(p.icon, 0, 0);
+            ctx.restore();
+
+            if (p.y > canvas.height) clues.splice(i, 1);
+        });
+        requestAnimationFrame(animateClues);
+    }
+    animateClues();
+})();
+</script>
+
+<style>
+    @keyframes fadeInCredits { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    #final-folder:active { transform: scale(0.9); }
+</style>
